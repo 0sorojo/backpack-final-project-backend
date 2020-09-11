@@ -7,8 +7,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/", questions);
-app.use("/", scores);
+app.use("/", backpack);
+// app.use("/", scores);
 
 const port = 3000;
 
