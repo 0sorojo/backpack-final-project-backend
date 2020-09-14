@@ -11,6 +11,26 @@ routes.get("/adventures", (req, res) => {
   });
 });
 
+routes.get("/adventures/completed", (req, res) => {
+  let queryString = `SELECT subject AS "subject completed",
+  COUNT(completed)
+  FROM adventures
+  GROUP BY subject;`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
+routes.get("/adventures/daily", (req, res) => {
+  let queryString = `SELECT date, subject AS "subject",
+  COUNT(completed) 
+  FROM adventures
+  GROUP BY date, subject;`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
 routes.post("/adventures", (req, res) => {
   let body = req.body;
   let queryString = `INSERT INTO adventures (date, subject, title, description, completed) VALUES($1::VARCHAR(10), $2::VARCHAR(40), $3::VARCHAR(60), $4::TEXT, $5::BOOLEAN)`;
