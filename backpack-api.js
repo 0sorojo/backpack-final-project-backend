@@ -11,21 +11,12 @@ routes.get("/adventures", (req, res) => {
   });
 });
 
-routes.get("/adventures/completed", (req, res) => {
-  let queryString = `SELECT subject AS "subject completed",
-  COUNT(completed)
-  FROM adventures
-  GROUP BY subject;`;
-  pool.query(queryString).then((response) => {
-    res.json(response.rows);
-  });
-});
-
-routes.get("/adventures/daily", (req, res) => {
-  let queryString = `SELECT date, subject AS "subject",
-  COUNT(completed) 
-  FROM adventures
-  GROUP BY date, subject;`;
+routes.get("/adventures/charts", (req, res) => {
+  let queryString = `SELECT date AS "date done", 
+  COUNT(completed), subject, completed
+  FROM adventures 
+  GROUP BY date, subject, completed
+  ORDER BY date ASC`;
   pool.query(queryString).then((response) => {
     res.json(response.rows);
   });
