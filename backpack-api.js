@@ -11,12 +11,76 @@ routes.get("/adventures", (req, res) => {
   });
 });
 
-routes.get("/adventures/charts", (req, res) => {
-  let queryString = `SELECT date AS "date done", 
-  COUNT(completed), subject, completed
-  FROM adventures 
-  GROUP BY date, subject, completed
-  ORDER BY date ASC`;
+routes.get("/adventures/dailycomplete", (req, res) => {
+  let date = new Date();
+  let months = [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+  ];
+  let yyyy = date.getFullYear();
+  let mm = months[date.getMonth()];
+  let dd = date.getDate();
+  let constructedDate = `${mm}-${dd}-${yyyy}`;
+  let queryString = `SELECT date AS "dateDone", 
+  COUNT(completed), subject
+  FROM adventures WHERE completed=true AND date='${constructedDate}'
+  GROUP BY date, subject`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
+routes.get("/adventures/dailyincomplete", (req, res) => {
+  let date = new Date();
+  let months = [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+  ];
+  let yyyy = date.getFullYear();
+  let mm = months[date.getMonth()];
+  let dd = date.getDate();
+  let constructedDate = `${mm}-${dd}-${yyyy}`;
+  let queryString = `SELECT date AS "dateDone", 
+  COUNT(completed)
+  FROM adventures WHERE completed = false AND date='${constructedDate}'
+  GROUP BY date`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
+routes.get("/adventures/complete", (req, res) => {
+  let queryString = `SELECT subject AS "subject", 
+  COUNT(completed) 
+  FROM adventures WHERE completed=true
+  GROUP BY subject`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
+routes.get("/adventures/incomplete", (req, res) => {
+  let queryString = `SELECT COUNT(completed) AS "total" FROM adventures WHERE completed = false`;
   pool.query(queryString).then((response) => {
     res.json(response.rows);
   });
