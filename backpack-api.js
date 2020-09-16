@@ -118,6 +118,15 @@ routes.put("/adventures/:id", (req, res) => {
     });
 });
 
+routes.put("/adventures/update/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+  let queryString = `UPDATE adventures SET completed = true WHERE id = ${id}`;
+  pool.query(queryString).then((response) => {
+    res.json(body);
+  });
+});
+
 routes.delete("/adventures/:id", (req, res) => {
   let id = req.params.id;
   let queryString = `DELETE FROM adventures WHERE id=${id}`;
