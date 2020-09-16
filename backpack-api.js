@@ -4,6 +4,21 @@ const routes = express.Router();
 const pool = require("./connection");
 const { response } = require("express");
 
+let months = [
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+];
+
 routes.get("/adventures", (req, res) => {
   let queryString = `SELECT * FROM adventures`;
   pool.query(queryString).then((response) => {
@@ -11,22 +26,20 @@ routes.get("/adventures", (req, res) => {
   });
 });
 
+routes.get("/adventures/adventurestogo", (req, res) => {
+  let date = new Date();
+  let yyyy = date.getFullYear();
+  let mm = months[date.getMonth()];
+  let dd = date.getDate();
+  let constructedDate = `${mm}-${dd}-${yyyy}`;
+  let queryString = `SELECT * FROM adventures WHERE completed=false AND date='${constructedDate}'`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
 routes.get("/adventures/dailycomplete", (req, res) => {
   let date = new Date();
-  let months = [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-  ];
   let yyyy = date.getFullYear();
   let mm = months[date.getMonth()];
   let dd = date.getDate();
@@ -42,20 +55,6 @@ routes.get("/adventures/dailycomplete", (req, res) => {
 
 routes.get("/adventures/dailyincomplete", (req, res) => {
   let date = new Date();
-  let months = [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-  ];
   let yyyy = date.getFullYear();
   let mm = months[date.getMonth()];
   let dd = date.getDate();
