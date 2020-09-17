@@ -76,6 +76,21 @@ routes.get("/adventures/dailyincomplete", (req, res) => {
   });
 });
 
+// this route GETs the ADVENTURES that are INCOMPLETE to date NOT INCLUDING today (Backpack)
+
+routes.get("/adventures/backpack", (req, res) => {
+  let date = new Date();
+  let yyyy = date.getFullYear();
+  let mm = months[date.getMonth()];
+  let dd = date.getDate();
+  let constructedDate = `${mm}-${dd}-${yyyy}`;
+  let queryString = `SELECT * FROM adventures WHERE date != '${constructedDate}' AND completed = false
+  `;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
 // This route is used to GET a NUMBER of how many of each SUBJECT has been COMPLETED to date
 
 routes.get("/adventures/complete", (req, res) => {
