@@ -19,12 +19,16 @@ let months = [
   "12",
 ];
 
+// This route is used to test and GET all ADVENTURES
+
 routes.get("/adventures", (req, res) => {
   let queryString = `SELECT * FROM adventures`;
   pool.query(queryString).then((response) => {
     res.json(response.rows);
   });
 });
+
+// This route is used to GET the ADVENTURES for the current day that have not been COMPLETED
 
 routes.get("/adventures/adventurestogo", (req, res) => {
   let date = new Date();
@@ -37,6 +41,8 @@ routes.get("/adventures/adventurestogo", (req, res) => {
     res.json(response.rows);
   });
 });
+
+// This route is used to GET a NUMBER of how many of each SUBJECT have been COMPLETED for the current day
 
 routes.get("/adventures/dailycomplete", (req, res) => {
   let date = new Date();
@@ -53,6 +59,8 @@ routes.get("/adventures/dailycomplete", (req, res) => {
   });
 });
 
+// This route is used to GET a NUMBER of how many total ADVENTURES are INCOMPLETE for the current day
+
 routes.get("/adventures/dailyincomplete", (req, res) => {
   let date = new Date();
   let yyyy = date.getFullYear();
@@ -68,6 +76,8 @@ routes.get("/adventures/dailyincomplete", (req, res) => {
   });
 });
 
+// This route is used to GET a NUMBER of how many of each SUBJECT has been COMPLETED to date
+
 routes.get("/adventures/complete", (req, res) => {
   let queryString = `SELECT subject AS "subject", 
   COUNT(completed) 
@@ -78,12 +88,16 @@ routes.get("/adventures/complete", (req, res) => {
   });
 });
 
+// This route is used to GET a NUMBER of how many total ADVENTURES are INCOMPLETE to date
+
 routes.get("/adventures/incomplete", (req, res) => {
   let queryString = `SELECT COUNT(completed) AS "total" FROM adventures WHERE completed = false`;
   pool.query(queryString).then((response) => {
     res.json(response.rows);
   });
 });
+
+// This route is used to create a new ADVENTURE
 
 routes.post("/adventures", (req, res) => {
   let body = req.body;
@@ -101,22 +115,20 @@ routes.post("/adventures", (req, res) => {
     });
 });
 
+// This route is used to UPDATE the SUBJECT, TITLE, AND DESCRIPTION of an ADVENTURE
+
 routes.put("/adventures/:id", (req, res) => {
   let id = req.params.id;
   let body = req.body;
-  let queryString = `UPDATE adventures SET date=$1::VARCHAR(10), subject=$2::VARCHAR(40), title=$3::VARCHAR(60), description=$4::TEXT, completed=$5::BOOLEAN WHERE id=${id}`;
+  let queryString = `UPDATE adventures SET subject=$1::VARCHAR(40), title=$2::VARCHAR(60), description=$3::TEXT WHERE id=${id}`;
   pool
-    .query(queryString, [
-      body.date,
-      body.subject,
-      body.title,
-      body.decription,
-      body.completed,
-    ])
+    .query(queryString, [body.subject, body.title, body.description])
     .then((response) => {
       res.json(req.body);
     });
 });
+
+// This route is used to UPDATE the COMPLETED value to TRUE on a specific ADVENTURE
 
 routes.put("/adventures/update/:id", (req, res) => {
   let id = req.params.id;
@@ -126,6 +138,41 @@ routes.put("/adventures/update/:id", (req, res) => {
     res.json(body);
   });
 });
+
+// This route is used to UPDATE the LOCATION value to START on a specific ADVENTURE
+
+routes.put("/adventures/start/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+  let queryString = `UPDATE adventures SET location = 'start' WHERE id = ${id}`;
+  pool.query(queryString).then((response) => {
+    res.json(body);
+  });
+});
+
+// This route is used to UPDATE the LOCATION value to DOING on a specific ADVENTURE
+
+routes.put("/adventures/doing/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+  let queryString = `UPDATE adventures SET location = 'doing' WHERE id = ${id}`;
+  pool.query(queryString).then((response) => {
+    res.json(body);
+  });
+});
+
+// This route is used to UPDATE the LOCATION value to FINISH on a specific ADVENTURE
+
+routes.put("/adventures/finish/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+  let queryString = `UPDATE adventures SET location = 'finish' WHERE id = ${id}`;
+  pool.query(queryString).then((response) => {
+    res.json(body);
+  });
+});
+
+// This route is used to DELETE a specific ADVENTURE
 
 routes.delete("/adventures/:id", (req, res) => {
   let id = req.params.id;
