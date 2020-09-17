@@ -53,7 +53,7 @@ routes.get("/adventures/dailycomplete", (req, res) => {
   let queryString = `SELECT date AS "dateDone", 
   COUNT(completed), subject
   FROM adventures WHERE completed=true AND date='${constructedDate}'
-  GROUP BY date, subject`;
+  GROUP BY date, subject ORDER BY subject`;
   pool.query(queryString).then((response) => {
     res.json(response.rows);
   });
@@ -97,7 +97,7 @@ routes.get("/adventures/complete", (req, res) => {
   let queryString = `SELECT subject AS "subject", 
   COUNT(completed) 
   FROM adventures WHERE completed=true
-  GROUP BY subject`;
+  GROUP BY subject ORDER BY subject`;
   pool.query(queryString).then((response) => {
     res.json(response.rows);
   });
