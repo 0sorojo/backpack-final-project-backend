@@ -187,6 +187,21 @@ routes.put("/adventures/finish/:id", (req, res) => {
   });
 });
 
+// This route is used to update the date
+routes.put("/adventures/update-date/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+  let date = new Date();
+  let yyyy = date.getFullYear();
+  let mm = months[date.getMonth()];
+  let dd = date.getDate();
+  let constructedDate = `${mm}-${dd}-${yyyy}`;
+  let queryString = `UPDATE adventures SET date = '${constructedDate}' WHERE id = ${id}`;
+  pool.query(queryString).then((response) => {
+    res.json(body);
+  });
+});
+
 // This route is used to DELETE a specific ADVENTURE
 
 routes.delete("/adventures/:id", (req, res) => {
