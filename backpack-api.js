@@ -187,7 +187,19 @@ routes.put("/adventures/finish/:id", (req, res) => {
   });
 });
 
-// This route is used to update the date
+// This route is used  UPDATE the TIMERCOUNTER
+
+routes.put("/adventures/counter/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+  let queryString = `UPDATE adventures SET timercounter=$1::SMALLINT WHERE id=${id}`;
+  pool.query(queryString, [body.timercounter]).then((response) => {
+    res.json(body);
+  });
+});
+
+// This route is used to UPDATE the DATE
+
 routes.put("/adventures/update-date/:id", (req, res) => {
   let id = req.params.id;
   let body = req.body;
