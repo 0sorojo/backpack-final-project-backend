@@ -112,11 +112,22 @@ routes.get("/adventures/incomplete", (req, res) => {
   });
 });
 
+// This route is used to GET the TOTAL MINUTES tabitha spends per subject BY DATE LIMIT 120 inidvidual adventures
+
+routes.get("/adventures/linedata", (req, res) => {
+  let queryString = `SELECT date, SUM(timercounter)*15 AS "totalMinutes", subject
+  FROM adventures
+  GROUP BY subject, date ORDER BY date DESC, subject ASC LIMIT 120`;
+  pool.query(queryString).then((response) => {
+    res.json(response.rows);
+  });
+});
+
 // This route is used to create a new ADVENTURE
 
 routes.post("/adventures", (req, res) => {
   let body = req.body;
-  let queryString = `INSERT INTO adventures (date, subject, title, description, completed) VALUES($1::VARCHAR(10), $2::VARCHAR(40), $3::VARCHAR(60), $4::TEXT, $5::BOOLEAN)`;
+  let queryString = `INSERT INTO adventures (date, subject, title, description, completed, timercounter) VALUES($1::VARCHAR(10), $2::VARCHAR(40), $3::VARCHAR(60), $4::TEXT, $5::BOOLEAN, $6::SMALLINT)`;
   pool
     .query(queryString, [
       body.date,
@@ -124,6 +135,7 @@ routes.post("/adventures", (req, res) => {
       body.title,
       body.description,
       body.completed,
+      body.timercounter,
     ])
     .then((response) => {
       res.json(body);
